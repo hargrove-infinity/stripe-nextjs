@@ -41,6 +41,12 @@ export async function POST(
         ? product.default_price
         : product.default_price.id;
 
+    const price = await stripe.prices.retrieve(priceId);
+
+    if (price.type !== "one_time") {
+      throw new ApiError(500, "Price has wrong type");
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer: customer.stripeCustomerId,
       mode: "payment",
