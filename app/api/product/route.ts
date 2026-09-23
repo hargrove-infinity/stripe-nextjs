@@ -22,7 +22,7 @@ type Product = {
 
 export async function POST(req: Request): Promise<NextResponse<Product | ErrorResponse>> {
   try {
-    const body = await req.json();
+    const body: unknown = await req.json();
 
     const input = createProductInputSchema.parse(body);
 

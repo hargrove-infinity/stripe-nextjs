@@ -15,7 +15,7 @@ export async function POST(
   req: Request,
 ): Promise<NextResponse<CheckoutSessionUrl | ErrorResponse>> {
   try {
-    const body = await req.json();
+    const body: unknown = await req.json();
 
     const input = createCheckoutSessionSchema.parse(body);
 
