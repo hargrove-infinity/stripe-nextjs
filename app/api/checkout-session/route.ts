@@ -1,9 +1,12 @@
 import type { ErrorResponse } from "@/types";
 
+import { eq } from "drizzle-orm";
 import { ApiError } from "next/dist/server/api-utils";
 import { NextResponse } from "next/server";
 import z, { ZodError } from "zod";
 
+import { db } from "@/db";
+import { customerTable } from "@/db/schema";
 import { env } from "@/env";
 import { routes } from "@/routes";
 import { stripe } from "@/stripe";
@@ -19,6 +22,14 @@ export async function POST(
 
     const input = createCheckoutSessionSchema.parse(body);
 
+    const customer = await db.query.customerTable.findFirst({
+      where: eq(customerTable.id, input.customerId),
+    });
+
+    if (!customer?.stripeCustomerId) {
+      throw new ApiError(500, "Customer does not have stripe id");
+    }
+
     const product = await stripe.products.retrieve(input.productId);
 
     if (!product.default_price) {
@@ -31,7 +42,7 @@ export async function POST(
         : product.default_price.id;
 
     const session = await stripe.checkout.sessions.create({
-      customer: input.customerId,
+      customer: customer.stripeCustomerId,
       mode: "payment",
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${env.APP_URL}${routes.checkoutSuccess}`,
