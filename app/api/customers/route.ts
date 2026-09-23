@@ -15,7 +15,7 @@ type Customer = Stripe.Response<Stripe.Customer | Stripe.DeletedCustomer>;
 
 export async function POST(req: Request): Promise<NextResponse<Customer | ErrorResponse>> {
   try {
-    const body = await req.json();
+    const body: unknown = await req.json();
 
     const input = createCustomerInputSchema.parse(body);
 
@@ -36,7 +36,7 @@ export async function POST(req: Request): Promise<NextResponse<Customer | ErrorR
     // Customer exists in the database but is not linked to a Stripe customer
     if (customerRecord && !customerRecord.stripeCustomerId) {
       const stripeCustomer = await stripe.customers.create({
-        ...body,
+        ...input,
         metadata: {
           appCustomerId: customerRecord.id,
         },
@@ -54,10 +54,10 @@ export async function POST(req: Request): Promise<NextResponse<Customer | ErrorR
     }
 
     // Customer does not exist in the database
-    const [createdCustomerRecord] = await db.insert(customerTable).values(body).returning();
+    const [createdCustomerRecord] = await db.insert(customerTable).values(input).returning();
 
     const stripeCustomer = await stripe.customers.create({
-      ...body,
+      ...input,
       metadata: {
         appCustomerId: createdCustomerRecord.id,
       },
