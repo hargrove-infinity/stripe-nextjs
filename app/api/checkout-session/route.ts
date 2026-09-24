@@ -3,6 +3,7 @@ import type { ErrorResponse } from "@/types";
 import { eq } from "drizzle-orm";
 import { ApiError } from "next/dist/server/api-utils";
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 import z, { ZodError } from "zod";
 
 import { db } from "@/db";
@@ -68,6 +69,13 @@ export async function POST(
     if (error instanceof ZodError) {
       const message = z.prettifyError(error);
       return NextResponse.json({ message }, { status: 422 });
+    }
+
+    if (error instanceof Stripe.errors.StripeError) {
+      return NextResponse.json(
+        { message: "Unable to create checkout session" },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ message: error.message }, { status: 500 });

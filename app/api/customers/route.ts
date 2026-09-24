@@ -1,9 +1,9 @@
 import type { ErrorResponse } from "@/types";
-import type Stripe from "stripe";
 
 import { and, eq } from "drizzle-orm";
 import { ApiError } from "next/dist/server/api-utils";
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 import z, { ZodError } from "zod";
 
 import { db } from "@/db";
@@ -84,6 +84,13 @@ export async function POST(req: Request): Promise<NextResponse<Customer | ErrorR
     if (error instanceof ZodError) {
       const message = z.prettifyError(error);
       return NextResponse.json({ message }, { status: 422 });
+    }
+
+    if (error instanceof Stripe.errors.StripeError) {
+      return NextResponse.json(
+        { message: "Unable to process customer request" },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ message: error.message }, { status: 500 });

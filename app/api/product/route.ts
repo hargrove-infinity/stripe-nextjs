@@ -1,8 +1,8 @@
 import type { ErrorResponse } from "@/types";
-import type Stripe from "stripe";
 
 import { ApiError } from "next/dist/server/api-utils";
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 import z, { ZodError } from "zod";
 
 import { stripe } from "@/stripe";
@@ -64,6 +64,13 @@ export async function POST(req: Request): Promise<NextResponse<Product | ErrorRe
     if (error instanceof ZodError) {
       const message = z.prettifyError(error);
       return NextResponse.json({ message }, { status: 422 });
+    }
+
+    if (error instanceof Stripe.errors.StripeError) {
+      return NextResponse.json(
+        { message: "Unable to retrieve product information" },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ message: error.message }, { status: 500 });
