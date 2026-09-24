@@ -27,8 +27,12 @@ export async function POST(
       where: eq(customerTable.id, input.customerId),
     });
 
+    if (!customer) {
+      throw new ApiError(404, "Customer not found");
+    }
+
     if (!customer?.stripeCustomerId) {
-      throw new ApiError(500, "Customer does not have stripe id");
+      throw new ApiError(422, "Customer is not linked to Stripe");
     }
 
     const product = await stripe.products.retrieve(input.productId);
