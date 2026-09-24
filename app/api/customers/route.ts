@@ -1,6 +1,6 @@
 import type { ErrorResponse } from "@/types";
 
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { ApiError } from "next/dist/server/api-utils";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -20,7 +20,7 @@ export async function POST(req: Request): Promise<NextResponse<Customer | ErrorR
     const input = createCustomerInputSchema.parse(body);
 
     const customerRecord = await db.query.customerTable.findFirst({
-      where: and(eq(customerTable.email, input.email), eq(customerTable.name, input.name)),
+      where: eq(customerTable.email, input.email),
     });
 
     // Customer exists in the database and is already linked to a Stripe customer
