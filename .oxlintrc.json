@@ -1,0 +1,6 @@
+{
+  "plugins": ["typescript", "react", "nextjs"],
+  "rules": {
+    "typescript/consistent-type-imports": "error"
+  }
+}

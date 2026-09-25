@@ -1,0 +1,15 @@
+{
+  "printWidth": 95,
+  "sortImports": {
+    "order": "asc",
+    "ignoreCase": true,
+    "newlinesBetween": true,
+    "groups": [
+      "type",
+      ["builtin", "external"],
+      ["internal", "subpath"],
+      ["parent", "sibling", "index"],
+      "style"
+    ]
+  }
+}

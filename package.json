@@ -1,0 +1,39 @@
+{
+  "name": "stripe-nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "drizzle-generate": "drizzle-kit generate --config=./drizzle.config.ts",
+    "drizzle-migrate": "drizzle-kit migrate --config=./drizzle.config.ts",
+    "dev": "concurrently -k -n next,tsc,lint \"next dev\" \"tsc --noEmit --watch --preserveWatchOutput\" \"npm run lint:watch\"",
+    "build": "next build",
+    "start": "next start",
+    "lint": "oxlint",
+    "lint:watch": "onchange -i \"**/*.{ts,tsx}\" --exclude-path .gitignore -- oxlint",
+    "format": "oxfmt"
+  },
+  "dependencies": {
+    "@stripe/stripe-js": "9.16.0",
+    "drizzle-orm": "0.45.2",
+    "next": "16.3.5",
+    "pg": "8.23.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "stripe": "22.6.2",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4",
+    "@types/node": "20",
+    "@types/pg": "8.23.1",
+    "@types/react": "19",
+    "@types/react-dom": "19",
+    "concurrently": "10.0.5",
+    "drizzle-kit": "0.31.10",
+    "onchange": "7.1.0",
+    "oxfmt": "0.68.0",
+    "oxlint": "1.83.0",
+    "tailwindcss": "4",
+    "typescript": "5"
+  }
+}
